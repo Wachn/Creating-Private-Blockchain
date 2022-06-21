@@ -74,8 +74,15 @@
                  block.hash = SHA256(JSON.stringify(block)).toString();
                  //Update the height
                  self.height = self.height + 1;
-                 self.chain.push(block)
-                 resolve(block)
+                 let anyError = await this.validateChain()
+                 if (anyError){
+                    self.chain.push(block);
+                    resolve(block);
+                 }else{
+                     console.log(anyError);
+                     reject(err);
+                 }
+                 
              }catch(err){
                  console.log("Block adding Error Experienced")
                  reject(err)
@@ -206,8 +213,8 @@
 
                            
             if (self.height>0){
-                self.chain.forEach((block, index) =>{
-                    let validRes = block.validate();
+                self.chain.forEach(async (block, index) =>{
+                    let validRes = await block.validate();
                     if (!validRes){
                         errorLog.push(`${index}: Validation Error`);
                     }

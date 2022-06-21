@@ -51,7 +51,7 @@
              // Returning the Block is valid
              if (calHash === self.hash){
                  console.log(`Calculated Hash is similar to Original Hash: ${calHash}`)
-                 resolve();
+                 resolve(true);
              }else{
                  console.log(`Invalid Hash, Original Hash: ${self.hash}, Calculated Hash: ${calHash}`)
                  reject(false)
