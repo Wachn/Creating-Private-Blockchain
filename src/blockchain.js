@@ -70,22 +70,24 @@
                  if (self.chain.length > 0){
                      block.previousBlockHash = await self.chain[self.height].hash;
                  }
-                 console.log(`Obtained previous block has: ${block.previousBlockHash}`)
+                 console.log(`Obtained previous block has: ${block.previousBlockHash}`);
                  block.hash = SHA256(JSON.stringify(block)).toString();
                  //Update the height
                  self.height = self.height + 1;
-                 let anyError = await this.validateChain()
-                 if (anyError){
-                    self.chain.push(block);
-                    resolve(block);
-                 }else{
-                     console.log(anyError);
-                     reject(err);
-                 }
+                 // Promise Handler block; since validateChain will always resolve an array (empyty/ or with error logs)
+                 this.validateChain().then(errors =>{
+                    if (errors.length > 0){
+                        console.log(errors);
+                        return reject(errors);
+                    }else{
+                        self.chain.push(block);
+                        return resolve(block);
+                    }
                  
-             }catch(err){
-                 console.log("Block adding Error Experienced")
-                 reject(err)
+                });
+            }catch(err){
+                 console.log("Block adding Error Experienced");
+                 reject(err);
              }
             
          });
